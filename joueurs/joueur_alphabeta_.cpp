@@ -1,5 +1,12 @@
 #include "joueur_alphabeta_.h"
 
+int win_prob[ALPHA_MAX_HAUTEUR][ALPHA_MAX_LARGEUR] =
+                        {{ 3, 4,  5,  7,  5, 4, 3},
+                         { 4, 6,  8, 10,  8, 6, 4},
+                         { 5, 8, 11, 13, 11, 8, 5},
+                         { 5, 8, 11, 13, 11, 8, 5},
+                         { 4, 6,  8, 10,  8, 6, 4},
+                         { 3, 4,  5,  7,  5, 4, 3}};
 
 VirtualGame::VirtualGame(Plateau const & p): _last_played(0) {
     for (int x = 0; x < ALPHA_MAX_LARGEUR; x++) {
@@ -87,6 +94,11 @@ void VirtualGame::unplay(int x) {
 
 bool VirtualGame::ended() {
     return _plays.empty();
+}
+
+int VirtualGame::mask(int x, int y) {
+    if (y >= _heights[x]) return 0;
+    else return _map[x][y] * 2 - 1;
 }
 
 void Joueur_AlphaBeta_::init_vgame(Jeu & j) {
@@ -203,5 +215,13 @@ int Joueur_AlphaBeta_::evaluation(bool maximizingPlayer) {
         }
     }
 
-    return 0;
+    int eval = 0;
+    for (int x = 0; x < ALPHA_MAX_LARGEUR; x++) {
+        for (int y = 0; y < ALPHA_MAX_HAUTEUR; y++) {
+            int mask = vgame->mask(x, y);
+            eval += mask * win_prob[y][x] * (maximizingPlayer ? 1 : -1);
+        }
+    }
+
+    return eval;
 }

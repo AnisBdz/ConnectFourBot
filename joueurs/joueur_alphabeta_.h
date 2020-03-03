@@ -5,7 +5,7 @@
 #include <utility>
 
 #define infinity 2147483647
-#define ALPHA_BETA_DEPTH 6
+#define ALPHA_BETA_DEPTH 4
 #define ALPHA_MAX_HAUTEUR 6
 #define ALPHA_MAX_LARGEUR 7
 
@@ -28,6 +28,7 @@ private:
 public:
     VirtualGame(Plateau const & p);
 
+    int mask(int x, int y);
     int get_state() { return _state; }
     std::vector<int> const & get_plays();
     void play(int x, bool maximizingPlayer);
