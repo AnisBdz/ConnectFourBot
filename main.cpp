@@ -12,7 +12,7 @@ int main()
     std::srand(std::time(nullptr));
 
     // création de l'Arbitre (graine , joueur 1, joueur 2 , nombre de parties)
-    Arbitre a (9999, player::RAND, player::BRUTAL_,1000);
+    Arbitre a (9999, player::A_, player::BRUTAL_, 1);
     // commence le challenge
     a.challenge();
     return 0;

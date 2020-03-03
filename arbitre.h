@@ -13,7 +13,7 @@
 #include "joueurs/joueur_brutal_.h"
 #include "joueurs/joueur_alphabeta_.h"
 
-#define TEMPS_POUR_UN_COUP 10 // millisecondes
+#define TEMPS_POUR_UN_COUP 10000 // millisecondes
 
 /**********************************************************************************
  *             classe lançant la partie et qui se sert des                        *
