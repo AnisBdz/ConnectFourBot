@@ -8,7 +8,46 @@ int win_prob[ALPHA_MAX_HAUTEUR][ALPHA_MAX_LARGEUR] =
                          { 4, 6,  8, 10,  8, 6, 4},
                          { 3, 4,  5,  7,  5, 4, 3}};
 
-VirtualGame::VirtualGame(Plateau const & p): _last_played(0) {
+void Variation::push_play(int play) {
+    _stack.push(play);
+}
+
+int Variation::pop_play() {
+    if (_stack.empty()) return -1;
+
+    int play = _stack.top();
+    _stack.pop();
+    return play;
+}
+
+void Variation::step() {
+    pop_play();
+    pop_play();
+}
+
+int Variation::peek() {
+    return _stack.empty() ? -1 : _stack.top();
+}
+
+
+void Observateur::add_node() { _nodes++; }
+void Observateur::add_alpha_cutoff() { _alpha_cutoffs++; }
+void Observateur::add_beta_cutoff() { _beta_cutoffs++; }
+void Observateur::show() {
+    std::cout << "---------------------------------------\n";
+    std::cout << "nodes:         " << _nodes << "\n";
+    std::cout << "alpha_cutoffs: " << _alpha_cutoffs << "\n";
+    std::cout << "beta_cutoffs:  " << _beta_cutoffs << "\n";
+    std::cout << "---------------------------------------\n";
+}
+
+void Observateur::reset() {
+    _nodes = 0;
+    _alpha_cutoffs = 0;
+    _beta_cutoffs = 0;
+}
+
+VirtualGame::VirtualGame(Plateau const & p) {
     for (int x = 0; x < ALPHA_MAX_LARGEUR; x++) {
         _heights[x] = p._hauteur[x];
         _plays.push_back(x);
@@ -22,6 +61,28 @@ VirtualGame::VirtualGame(Plateau const & p): _last_played(0) {
 std::vector<int> const & VirtualGame::get_plays() {
     return _plays;
 }
+
+std::vector<int> VirtualGame::get_plays(Variation & v) {
+    int play = v.pop_play();
+
+    bool found = false;
+    for (auto it = _plays.begin(); it != _plays.end(); it++) {
+        if ((*it) == play) {
+            found = true;
+            _plays.erase(it);
+            break;
+        }
+    }
+
+    if (found) {
+        auto copy(_plays);
+        copy.insert(copy.begin(), play);
+        return copy;
+    }
+
+    return _plays;
+}
+
 
 void VirtualGame::update_plays() {
     _state = STATE_DRAW;
@@ -122,23 +183,33 @@ char Joueur_AlphaBeta_::nom_abbrege() const
 void Joueur_AlphaBeta_::recherche_coup(Jeu jeu, int & c)
 {
     init_vgame(jeu);
+    observateur.reset();
+    variation.step();
 
-    auto val_cp = alphabeta(ALPHA_BETA_DEPTH, -infinity, infinity, true);
-    std::cout << "value " << val_cp.first << "\n";
+    auto val = alphabeta(ALPHA_BETA_DEPTH, -infinity, infinity, true);
+    auto coup = variation.peek();
+
+    std::cout << "value " << val << "\n";
 
     for (int i = 0; i < jeu.nb_coups(); i++) {
-        if (jeu[i] == val_cp.second) {
+        if (jeu[i] == coup) {
             c = i;
             break;
         }
     }
+
+    observateur.show();
 }
 
-value_coup Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maximizingPlayer) {
+int Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maximizingPlayer) {
+    // increment number of nodes
+    observateur.add_node();
+
     // if depth = 0 or node is a terminal node then
     if (depth == 0 || vgame->ended()) {
         // return the heuristic value of node
-        return value_coup(evaluation(maximizingPlayer), 0);
+        variation.push_play(-1);
+        return evaluation(maximizingPlayer);
     }
 
     // if maximizingPlayer then
@@ -148,29 +219,33 @@ value_coup Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool max
         int coup = -1;
 
         // for each child of node do
-        for (auto play : vgame->get_plays()) {
+        for (auto play : vgame->get_plays(variation)) {
             vgame->play(play, maximizingPlayer);
             auto ab = alphabeta(depth - 1, alpha, beta, false);
             vgame->unplay(play);
 
             // update `coup`
-            if (ab.first > value) coup = play;
+            if (ab > value) coup = play;
 
             // value := max(value, alphabeta(child, depth − 1, α, β, FALSE))
-            value = std::max(value, ab.first);
+            value = std::max(value, ab);
 
             // α := max(α, value)
             alpha = std::max(alpha, value);
 
             // if α ≥ β then
             if (alpha >= beta) {
+                // increment number of beta cutoffs
+                observateur.add_beta_cutoff();
+
                 // break (* β cut-off *)
                 break;
             }
         }
 
         // return value
-        return value_coup(value, coup);
+        variation.push_play(coup);
+        return value;
     }
 
     // else
@@ -180,26 +255,33 @@ value_coup Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool max
         int coup = -1;
 
         // for each child of node do
-        for (auto play : vgame->get_plays()) {
+        for (auto play : vgame->get_plays(variation)) {
             vgame->play(play, maximizingPlayer);
             auto ab = alphabeta(depth - 1, alpha, beta, true);
             vgame->unplay(play);
 
             // update `coup`
-            if (ab.first < value) coup = play;
+            if (ab < value) coup = play;
 
             // value := min(value, alphabeta(child, depth − 1, α, β, TRUE))
-            value = std::min(value, ab.first);
+            value = std::min(value, ab);
+
+            // β := min(β, value)
+            beta = std::min(beta, value);
 
             // if α ≥ β then
             if (alpha >= beta) {
-              // break (* α cut-off *)
-              break;
+                // increment number of alpha cutoffs
+                observateur.add_alpha_cutoff();
+
+                // break (* α cut-off *)
+                break;
             }
         }
 
         // return value
-        return value_coup(value, coup);
+        variation.push_play(coup);
+        return value;
     }
 }
 
