@@ -8,25 +8,27 @@ int win_prob[ALPHA_MAX_HAUTEUR][ALPHA_MAX_LARGEUR] =
                          { 4, 6,  8, 10,  8, 6, 4},
                          { 3, 4,  5,  7,  5, 4, 3}};
 
-void Variation::push_play(int play) {
-    _queue.push(play);
+bool Variation::activated = true;
+
+void Variation::load(std::stack<int> const & q) {
+    _stack = std::stack<int>(q);
 }
 
-int Variation::pop_play() {
-    if (_queue.empty()) return -1;
+int Variation::pop() {
+    if (_stack.empty()) return -1;
 
-    int play = _queue.front();
-    _queue.pop();
+    int play = _stack.top();
+    _stack.pop();
     return play;
 }
 
 void Variation::step() {
-    pop_play();
-    pop_play();
+    pop();
+    pop();
 }
 
 int Variation::peek() {
-    return _queue.empty() ? -1 : _queue.front();
+    return _stack.empty() ? -1 : _stack.top();
 }
 
 
@@ -63,7 +65,9 @@ std::vector<int> const & VirtualGame::get_plays() {
 }
 
 std::vector<int> VirtualGame::get_plays(Variation & v) {
-    int play = v.pop_play();
+    if (v.activated) return get_plays();
+
+    int play = v.pop();
 
     bool found = false;
     for (auto it = _plays.begin(); it != _plays.end(); it++) {
@@ -187,9 +191,10 @@ void Joueur_AlphaBeta_::recherche_coup(Jeu jeu, int & c)
     variation.step();
 
     auto val = alphabeta(ALPHA_BETA_DEPTH, -infinity, infinity, true);
-    auto coup = variation.peek();
+    auto coup = val.second.top();
 
-    std::cout << "value " << val << "\n";
+    std::cout << "value " << val.first << "\n";
+    std::cout << "coup "  << coup << "\n";
 
     for (int i = 0; i < jeu.nb_coups(); i++) {
         if (jeu[i] == coup) {
@@ -198,18 +203,18 @@ void Joueur_AlphaBeta_::recherche_coup(Jeu jeu, int & c)
         }
     }
 
+    // variation.load(val.second);
     observateur.show();
 }
 
-int Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maximizingPlayer) {
+eval_var Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maximizingPlayer) {
     // increment number of nodes
     observateur.add_node();
 
     // if depth = 0 or node is a terminal node then
     if (depth == 0 || vgame->ended()) {
         // return the heuristic value of node
-        variation.push_play(-1);
-        return evaluation(maximizingPlayer);
+        return eval_var(evaluation(maximizingPlayer), variation_stack());
     }
 
     // if maximizingPlayer then
@@ -217,6 +222,7 @@ int Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maximizing
         // value := −∞
         int value = -infinity;
         int coup = -1;
+        variation_stack var;
 
         // for each child of node do
         for (auto play : vgame->get_plays(variation)) {
@@ -225,10 +231,13 @@ int Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maximizing
             vgame->unplay(play);
 
             // update `coup`
-            if (ab > value) coup = play;
+            if (ab.first > value) {
+                coup = play;
+                var = ab.second;
+            }
 
             // value := max(value, alphabeta(child, depth − 1, α, β, FALSE))
-            value = std::max(value, ab);
+            value = std::max(value, ab.first);
 
             // α := max(α, value)
             alpha = std::max(alpha, value);
@@ -244,8 +253,8 @@ int Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maximizing
         }
 
         // return value
-        variation.push_play(coup);
-        return value;
+        var.push(coup);
+        return eval_var(value, var);
     }
 
     // else
@@ -253,6 +262,7 @@ int Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maximizing
         // value := +∞
         int value = infinity;
         int coup = -1;
+        variation_stack var;
 
         // for each child of node do
         for (auto play : vgame->get_plays(variation)) {
@@ -261,10 +271,13 @@ int Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maximizing
             vgame->unplay(play);
 
             // update `coup`
-            if (ab < value) coup = play;
+            if (ab.first < value) {
+                coup = play;
+                var = ab.second;
+            }
 
             // value := min(value, alphabeta(child, depth − 1, α, β, TRUE))
-            value = std::min(value, ab);
+            value = std::min(value, ab.first);
 
             // β := min(β, value)
             beta = std::min(beta, value);
@@ -280,8 +293,8 @@ int Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maximizing
         }
 
         // return value
-        variation.push_play(coup);
-        return value;
+        var.push(coup);
+        return eval_var(value, var);
     }
 }
 

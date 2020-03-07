@@ -3,11 +3,11 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <queue>
+#include <stack>
 #include <utility>
 
 #define infinity 2147483647
-#define ALPHA_BETA_DEPTH 5
+#define ALPHA_BETA_DEPTH 1
 #define ALPHA_MAX_HAUTEUR 6
 #define ALPHA_MAX_LARGEUR 7
 
@@ -15,13 +15,18 @@
 #define STATE_MINIMIZING_PLAYER_WIN 2
 #define STATE_DRAW 0
 
+using variation_stack = std::stack<int>;
+using eval_var = std::pair<int, variation_stack>;
+
 class Variation {
     private:
-        std::queue<int> _queue;
+        variation_stack _stack;
 
     public:
-        void push_play(int play);
-        int pop_play();
+        static bool activated;
+
+        int pop();
+        void load(std::stack<int> const & s);
         void step();
         int peek();
 };
@@ -71,12 +76,12 @@ private:
     Variation variation;
 
 public:
-  Joueur_AlphaBeta_(std::string nom, bool joueur);
-  char nom_abbrege() const override;
+    Joueur_AlphaBeta_(std::string nom, bool joueur);
+    char nom_abbrege() const override;
 
-  void recherche_coup(Jeu, int & c) override;
+    void recherche_coup(Jeu, int & c) override;
 
     void init_vgame(Jeu &);
-    int alphabeta(int depth, int alpha, int beta, bool maximizingPlayer);
+    eval_var alphabeta(int depth, int alpha, int beta, bool maximizingPlayer);
     int evaluation(bool maximizingPlayer);
 };
