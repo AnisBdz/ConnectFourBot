@@ -3,7 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <stack>
+#include <queue>
 #include <utility>
 
 #define infinity 2147483647
@@ -17,7 +17,7 @@
 
 class Variation {
     private:
-        std::stack<int> _stack;
+        std::queue<int> _queue;
 
     public:
         void push_play(int play);
@@ -79,5 +79,4 @@ public:
     void init_vgame(Jeu &);
     int alphabeta(int depth, int alpha, int beta, bool maximizingPlayer);
     int evaluation(bool maximizingPlayer);
-    std::unique_ptr<VirtualGame> const & get_vgame() { return vgame; }
 };

@@ -9,14 +9,14 @@ int win_prob[ALPHA_MAX_HAUTEUR][ALPHA_MAX_LARGEUR] =
                          { 3, 4,  5,  7,  5, 4, 3}};
 
 void Variation::push_play(int play) {
-    _stack.push(play);
+    _queue.push(play);
 }
 
 int Variation::pop_play() {
-    if (_stack.empty()) return -1;
+    if (_queue.empty()) return -1;
 
-    int play = _stack.top();
-    _stack.pop();
+    int play = _queue.front();
+    _queue.pop();
     return play;
 }
 
@@ -26,7 +26,7 @@ void Variation::step() {
 }
 
 int Variation::peek() {
-    return _stack.empty() ? -1 : _stack.top();
+    return _queue.empty() ? -1 : _queue.front();
 }
 
 
