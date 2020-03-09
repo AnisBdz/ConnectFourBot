@@ -63,7 +63,7 @@ void Observateur::reset() {
 VirtualGame::VirtualGame(Plateau const & p) {
     for (int x = 0; x < ALPHA_MAX_LARGEUR; x++) {
         _heights[x] = p._hauteur[x];
-        _plays.push_back(x);
+        if (_heights[x] < ALPHA_MAX_HAUTEUR) _plays.push_back(x);
 
         for (int y = 0; y < _heights[x]; y++) {
             _map[x][y] = (((p._pions)[x]) & (1 << y));
@@ -76,7 +76,7 @@ std::vector<int> const & VirtualGame::get_plays() {
 }
 
 std::vector<int> VirtualGame::get_plays(Variation & v) {
-    if (v.activated) return get_plays();
+    if (!v.activated) return get_plays();
 
     int play = v.pop();
 
@@ -94,6 +94,7 @@ std::vector<int> VirtualGame::get_plays(Variation & v) {
         copy.insert(copy.begin(), play);
         return copy;
     }
+
 
     return _plays;
 }
@@ -158,8 +159,7 @@ void VirtualGame::update_plays() {
 
 
 void VirtualGame::play(int x, bool maximizingPlayer) {
-    _map[x][_heights[x]] = maximizingPlayer;
-    _heights[x]++;
+    _map[x][_heights[x]++] = maximizingPlayer;
     update_plays();
 }
 
@@ -204,6 +204,7 @@ void Joueur_AlphaBeta_::recherche_coup(Jeu jeu, int & c)
     auto val = alphabeta(ALPHA_BETA_DEPTH, -infinity, infinity, true);
     auto coup = val.second.top();
 
+    c = -4;
     for (int i = 0; i < jeu.nb_coups(); i++) {
         if (jeu[i] == coup) {
             c = i;
@@ -229,7 +230,7 @@ eval_var Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maxim
     if (maximizingPlayer) {
         // value := −∞
         int value = -infinity;
-        int coup = -1;
+        int coup = -2;
         variation_stack var;
 
         // for each child of node do
@@ -239,13 +240,12 @@ eval_var Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maxim
             vgame->unplay(play);
 
             // update `coup`
-            if (ab.first > value) {
-                coup = play;
-                var = ab.second;
-            }
-
             // value := max(value, alphabeta(child, depth − 1, α, β, FALSE))
-            value = std::max(value, ab.first);
+            if (ab.first > value) {
+                coup  = play;
+                value = ab.first;
+                var   = ab.second;
+            }
 
             // α := max(α, value)
             alpha = std::max(alpha, value);
@@ -269,7 +269,7 @@ eval_var Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maxim
     else {
         // value := +∞
         int value = infinity;
-        int coup = -1;
+        int coup = -3;
         variation_stack var;
 
         // for each child of node do
@@ -279,13 +279,12 @@ eval_var Joueur_AlphaBeta_::alphabeta(int depth, int alpha, int beta, bool maxim
             vgame->unplay(play);
 
             // update `coup`
-            if (ab.first < value) {
-                coup = play;
-                var = ab.second;
-            }
-
             // value := min(value, alphabeta(child, depth − 1, α, β, TRUE))
-            value = std::min(value, ab.first);
+            if (ab.first < value) {
+                coup  = play;
+                var   = ab.second;
+                value = ab.first;
+            }
 
             // β := min(β, value)
             beta = std::min(beta, value);
