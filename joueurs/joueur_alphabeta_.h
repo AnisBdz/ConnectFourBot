@@ -5,9 +5,11 @@
 #include <vector>
 #include <stack>
 #include <utility>
+#include <chrono>
+#include <thread>
 
 #define infinity 2147483647
-#define ALPHA_BETA_DEPTH 1
+#define ALPHA_BETA_DEPTH 3
 #define ALPHA_MAX_HAUTEUR 6
 #define ALPHA_MAX_LARGEUR 7
 
@@ -33,6 +35,7 @@ class Variation {
 
 class Observateur {
 private:
+    std::chrono::time_point<std::chrono::system_clock> _timestamp_before;
     int _nodes;
     int _alpha_cutoffs;
     int _beta_cutoffs;

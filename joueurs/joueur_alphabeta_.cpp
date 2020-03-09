@@ -36,17 +36,28 @@ void Observateur::add_node() { _nodes++; }
 void Observateur::add_alpha_cutoff() { _alpha_cutoffs++; }
 void Observateur::add_beta_cutoff() { _beta_cutoffs++; }
 void Observateur::show() {
-    std::cout << "---------------------------------------\n";
-    std::cout << "nodes:         " << _nodes << "\n";
-    std::cout << "alpha_cutoffs: " << _alpha_cutoffs << "\n";
-    std::cout << "beta_cutoffs:  " << _beta_cutoffs << "\n";
-    std::cout << "---------------------------------------\n";
+    auto self = this;
+    std::thread th([self] () {
+        auto after = std::chrono::system_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(after - self->_timestamp_before);
+        auto ms = duration.count();
+
+        std::cout << "---------------------------------------\n";
+        std::cout << "took:          " << ms << "ms\n";
+        std::cout << "nodes:         " << self->_nodes << "\n";
+        std::cout << "alpha_cutoffs: " << self->_alpha_cutoffs << "\n";
+        std::cout << "beta_cutoffs:  " << self->_beta_cutoffs << "\n";
+        std::cout << "---------------------------------------\n";
+    });
+
+    th.detach();
 }
 
 void Observateur::reset() {
     _nodes = 0;
     _alpha_cutoffs = 0;
     _beta_cutoffs = 0;
+    _timestamp_before = std::chrono::system_clock::now();
 }
 
 VirtualGame::VirtualGame(Plateau const & p) {
@@ -186,15 +197,12 @@ char Joueur_AlphaBeta_::nom_abbrege() const
 
 void Joueur_AlphaBeta_::recherche_coup(Jeu jeu, int & c)
 {
-    init_vgame(jeu);
     observateur.reset();
+    init_vgame(jeu);
     variation.step();
 
     auto val = alphabeta(ALPHA_BETA_DEPTH, -infinity, infinity, true);
     auto coup = val.second.top();
-
-    std::cout << "value " << val.first << "\n";
-    std::cout << "coup "  << coup << "\n";
 
     for (int i = 0; i < jeu.nb_coups(); i++) {
         if (jeu[i] == coup) {
@@ -203,7 +211,7 @@ void Joueur_AlphaBeta_::recherche_coup(Jeu jeu, int & c)
         }
     }
 
-    // variation.load(val.second);
+    variation.load(val.second);
     observateur.show();
 }
 
@@ -309,6 +317,7 @@ int Joueur_AlphaBeta_::evaluation(bool maximizingPlayer) {
                 return 0;
         }
     }
+
 
     int eval = 0;
     for (int x = 0; x < ALPHA_MAX_LARGEUR; x++) {
