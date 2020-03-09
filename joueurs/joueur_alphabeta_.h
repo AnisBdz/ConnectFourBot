@@ -9,13 +9,14 @@
 #include <thread>
 
 #define infinity 2147483647
-#define ALPHA_BETA_DEPTH 3
+#define ALPHA_BETA_DEPTH  3
 #define ALPHA_MAX_HAUTEUR 6
 #define ALPHA_MAX_LARGEUR 7
 
 #define STATE_MAXIMIZING_PLAYER_WIN 1
 #define STATE_MINIMIZING_PLAYER_WIN 2
-#define STATE_DRAW 0
+#define STATE_DRAW                  0
+#define STATE_ONGOING              -1
 
 using variation_stack = std::stack<int>;
 using eval_var = std::pair<int, variation_stack>;
@@ -53,7 +54,7 @@ class VirtualGame {
 private:
     std::vector<int> _plays;
     bool _map[ALPHA_MAX_LARGEUR][ALPHA_MAX_HAUTEUR];
-    int  _heights[ALPHA_MAX_HAUTEUR];
+    int  _heights[ALPHA_MAX_LARGEUR];
     int  _state;
 
     void update_plays();
