@@ -174,7 +174,8 @@ bool VirtualGame::ended() {
 
 int VirtualGame::mask(int x, int y) {
     if (y >= _heights[x]) return 0;
-    else return _map[x][y] * 2 - 1;
+    else if (_map[x][y]) return 1;
+         else return -1;
 }
 
 void Joueur_AlphaBeta_::init_vgame(Jeu & j) {
@@ -322,7 +323,7 @@ int Joueur_AlphaBeta_::evaluation(bool maximizingPlayer) {
     for (int x = 0; x < ALPHA_MAX_LARGEUR; x++) {
         for (int y = 0; y < ALPHA_MAX_HAUTEUR; y++) {
             int mask = vgame->mask(x, y);
-            eval += mask * win_prob[y][x] * (maximizingPlayer ? 1 : -1);
+            eval += mask * win_prob[y][x];
         }
     }
 
