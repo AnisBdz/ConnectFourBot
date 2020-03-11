@@ -9,7 +9,7 @@ using namespace std;
 int main()
 {
     //initialise la graine du générateur aléatoire
-    // std::srand(20000);
+    std::srand(20000);
 
     // création de l'Arbitre (graine , joueur 1, joueur 2 , nombre de parties)
     // Variation::activated = false;
@@ -17,7 +17,7 @@ int main()
     // a.challenge();
 
     // Variation::activated = true;
-    Arbitre b (9999, player::BJORN, player::IVAR, 100);
+    Arbitre b (9999, player::FLOKI, player::BJORN, 100);
     b.challenge();
     return 0;
 }

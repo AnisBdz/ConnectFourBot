@@ -35,6 +35,9 @@ void Arbitre::initialisation()
       case player::IVAR:
         _joueur1 = std::make_shared<Ivar> ("Ivar",true);
         break;
+        case player::FLOKI:
+          _joueur1 = std::make_shared<Ivar> ("FLoki",true);
+          break;
   default:
     break;
   }
@@ -55,6 +58,9 @@ case player::BJORN:
   case player::IVAR:
     _joueur2 = std::make_shared<Ivar> ("Ivar",false);
     break;
+    case player::FLOKI:
+      _joueur2 = std::make_shared<Ivar> ("Floki",false);
+      break;
   default:
     break;
   }
