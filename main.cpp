@@ -17,7 +17,7 @@ int main()
     // a.challenge();
 
     // Variation::activated = true;
-    Arbitre b (9999, player::BJORN, player::A_, 100);
+    Arbitre b (9999, player::BJORN, player::IVAR, 100);
     b.challenge();
     return 0;
 }
