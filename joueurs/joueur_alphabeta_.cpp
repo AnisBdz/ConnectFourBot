@@ -60,12 +60,14 @@
       _timestamp_before = std::chrono::system_clock::now();
   }
 
-  VirtualGame::VirtualGame(Plateau const & p) {
+  VirtualGame::VirtualGame(Plateau const & p) : _eval(0) {
       for (int x = 0; x < ALPHA_MAX_LARGEUR; x++) {
           _heights[x] = p._hauteur[x];
 
           for (int y = 0; y < _heights[x]; y++) {
               _map[x][y] = (((p._pions)[x]) & (1 << y));
+
+              _eval += mask(x, y) * win_prob[y][x];
           }
       }
 
@@ -160,11 +162,16 @@
 
 
   void VirtualGame::play(int x, bool maximizingPlayer) {
-      _map[x][_heights[x]++] = maximizingPlayer;
+      int y = _heights[x];
+      _map[x][y] = maximizingPlayer;
+      _heights[x]++;
+      _eval += mask(x, y) * win_prob[y][x];
       update_plays();
   }
 
   void VirtualGame::unplay(int x) {
+      int y = _heights[x] - 1;
+      _eval -= mask(x, y) * win_prob[y][x];
       _heights[x]--;
       update_plays();
   }
@@ -320,12 +327,32 @@
       }
 
 
-      int eval = 0;
-      for (int x = 0; x < ALPHA_MAX_LARGEUR; x++) {
-          for (int y = 0; y < ALPHA_MAX_HAUTEUR; y++) {
-              int mask = vgame->mask(x, y);
-              eval += mask * win_prob[y][x];
-          }
-      }
-      return eval + 138;
+      // int eval = 0;
+      // for (int x = 0; x < ALPHA_MAX_LARGEUR; x++) {
+      //     for (int y = 0; y < ALPHA_MAX_HAUTEUR; y++) {
+      //         int mask = vgame->mask(x, y);
+      //         eval += mask * win_prob[y][x];
+      //
+      //     }
+      // }
+
+      int pp = vgame->get_eval();
+
+      // if (eval != pp) {
+      //     std::cout << "opsie: \n" << "eval: " << eval << "\npp:" << pp << "\n";
+      //
+      //     for (int y = 0; y < ALPHA_MAX_HAUTEUR; y++) {
+      //     for (int x = 0; x < ALPHA_MAX_LARGEUR; x++) {
+      //             int mask = vgame->mask(x, y);
+      //             std::cout << mask << " ";
+      //
+      //         }
+      //
+      //         std::cout << "\n";
+      //     }
+      //     std::cout << "--------------\n";
+      //
+      //     exit(64209);
+      // }
+      return pp;
   }

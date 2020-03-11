@@ -9,9 +9,11 @@
 #include <thread>
 
 #define infinity 2147483647
-#define ALPHA_BETA_DEPTH  3
+#define ALPHA_BETA_DEPTH  4
 #define ALPHA_MAX_HAUTEUR 6
 #define ALPHA_MAX_LARGEUR 7
+
+#define ALPHA_EVAL_PARAM 138
 
 #define STATE_MAXIMIZING_PLAYER_WIN 1
 #define STATE_MINIMIZING_PLAYER_WIN 2
@@ -56,6 +58,7 @@ private:
     bool _map[ALPHA_MAX_LARGEUR][ALPHA_MAX_HAUTEUR];
     int  _heights[ALPHA_MAX_LARGEUR];
     int  _state;
+    int _eval;
 
     void update_plays();
 
@@ -64,6 +67,7 @@ public:
 
     int mask(int x, int y);
     int get_state() { return _state; }
+    int get_eval() { return _eval + ALPHA_EVAL_PARAM; }
     std::vector<int> const & get_plays();
     std::vector<int> get_plays(Variation &);
     void play(int x, bool maximizingPlayer);
