@@ -18,7 +18,7 @@
  */
 
 #define infinity 2147483647
-#define FLOKI_BETA_DEPTH  5
+#define FLOKI_BETA_DEPTH  4
 #define FLOKI_MAX_HAUTEUR 6
 #define FLOKI_MAX_LARGEUR 7
 

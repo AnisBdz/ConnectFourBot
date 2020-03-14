@@ -41,6 +41,11 @@ void Arbitre::initialisation()
         break;
     
 
+        case player::LAGERTHA:
+        _joueur1 = std::make_shared<Lagertha>("Lagertha",true);
+        break;
+    
+
         case player::RANDOM:
         _joueur1 = std::make_shared<Random>("Random",true);
         break;
@@ -68,6 +73,11 @@ void Arbitre::initialisation()
 
         case player::IVAR:
           _joueur2 = std::make_shared<Ivar> ("Ivar",false);
+          break;
+    
+
+        case player::LAGERTHA:
+          _joueur2 = std::make_shared<Lagertha> ("Lagertha",false);
           break;
     
 

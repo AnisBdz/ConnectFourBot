@@ -13,6 +13,7 @@
 #include "joueurs/joueur_brutal_.h"
 #include "joueurs/joueur_floki.h"
 #include "joueurs/joueur_ivar.h"
+#include "joueurs/joueur_lagertha.h"
 #include "joueurs/joueur_random.h"
 
 #define TEMPS_POUR_UN_COUP 10 // millisecondes
@@ -23,7 +24,7 @@
  *             dans les temps                                                     *
  **********************************************************************************/
 
-enum class player { BJORN,BRUTAL_,FLOKI,IVAR,RANDOM };
+enum class player { BJORN,BRUTAL_,FLOKI,IVAR,LAGERTHA,RANDOM };
 
 /**
  * @brief The Arbitre class

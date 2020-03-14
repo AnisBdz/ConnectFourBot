@@ -17,6 +17,7 @@ add_compile_options(-Wall -Wpedantic)
 joueur_brutal_.cpp
 joueur_floki.cpp
 joueur_ivar.cpp
+joueur_lagertha.cpp
 joueur_random.cpp
         )
 
@@ -26,6 +27,7 @@ joueur_random.cpp
 joueur_brutal_.h
 joueur_floki.h
 joueur_ivar.h
+joueur_lagertha.h
 joueur_random.h
         )
     
