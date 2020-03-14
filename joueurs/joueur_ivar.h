@@ -9,7 +9,7 @@
 #include <thread>
 
 /*
- * Ivar Ironside
+ * Ivar
  * He uses the power of the alphabeta to massacre his enemies
  * like his older brother Bjorn Ironside, Ivar has an observator that monitors his moves and plays
  * but he is a bit reckless, his brutal and doesn't like to take shorcuts

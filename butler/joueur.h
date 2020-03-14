@@ -9,10 +9,7 @@
 #include <thread>
 
 /*
- * Player Ironside
- * He uses the power of the alphabeta to massacre his enemies
- * like his older brother Bjorn Ironside, Player has an observator that monitors his moves and plays
- * but he is a bit reckless, his brutal and doesn't like to take shorcuts
+ * Player
  */
 
 #define infinity 2147483647
