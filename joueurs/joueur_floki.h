@@ -18,7 +18,7 @@
  */
 
 #define infinity 2147483647
-#define FLOKI_BETA_DEPTH  100
+#define FLOKI_BETA_DEPTH  5
 #define FLOKI_MAX_HAUTEUR 6
 #define FLOKI_MAX_LARGEUR 7
 
@@ -57,6 +57,8 @@ public:
         bool is_occupied(hash_t hash);
         int  get_eval(hash_t hash);
         void store(hash_t hash, int eval);
+
+        void clear();
     };
 
     class Observateur {

@@ -18,6 +18,8 @@ Floki::TranspositionTable::TranspositionTable() {
             }
         }
     }
+
+    clear();
 }
 
 Floki::TranspositionTable::hash_t Floki::TranspositionTable::hash(bool map[FLOKI_MAX_LARGEUR][FLOKI_MAX_HAUTEUR], int heights[]) {
@@ -29,7 +31,7 @@ Floki::TranspositionTable::hash_t Floki::TranspositionTable::hash(bool map[FLOKI
 
             if (y >= heights[x]) m = 0;
             else if (map[x][y])  m = 1;
-            else                  m = 2;
+            else                 m = 2;
 
             h ^= _hashes[x][y][m];
         }
@@ -56,6 +58,11 @@ int Floki::TranspositionTable::h(hash_t hash) {
     return hash & 0xFFFF;
 }
 
+void Floki::TranspositionTable::clear() {
+    for (int i = 0; i < FLOKI_MEMORY_SIZE; i++) {
+        _memory[i].occupied = false;
+    }
+}
 
   void Floki::Observateur::add_node() { _nodes++; }
   void Floki::Observateur::add_FLOKI_cutoff() { _FLOKI_cutoffs++; }
@@ -205,6 +212,7 @@ int Floki::TranspositionTable::h(hash_t hash) {
   {
       observateur.reset();
       init_vgame(jeu);
+      transposition_table.clear();
 
       auto val = alphabeta(FLOKI_BETA_DEPTH, -infinity, infinity, true);
       auto coup = val.second;
