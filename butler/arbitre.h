@@ -9,11 +9,7 @@
 #include <vector>
 #include "jeu.h"
 
-#include "joueurs/joueur_bjorn.h"
-#include "joueurs/joueur_brutal_.h"
-#include "joueurs/joueur_floki.h"
-#include "joueurs/joueur_ivar.h"
-#include "joueurs/joueur_random.h"
+INCLUDE_PLAYERS
 
 #define TEMPS_POUR_UN_COUP 10 // millisecondes
 
@@ -23,7 +19,7 @@
  *             dans les temps                                                     *
  **********************************************************************************/
 
-enum class player { BJORN,BRUTAL_,FLOKI,IVAR,RANDOM };
+ENUM_PLAYERS
 
 /**
  * @brief The Arbitre class

@@ -10,25 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED on)
 set(CMAKE_CXX_EXTENSIONS off)
 add_compile_options(-Wall -Wpedantic)
 
-
-        set(SRCS
-            joueur.cpp
-            joueur_bjorn.cpp
-joueur_brutal_.cpp
-joueur_floki.cpp
-joueur_ivar.cpp
-joueur_random.cpp
-        )
-
-        set(HEADERS
-            joueur.h
-            joueur_bjorn.h
-joueur_brutal_.h
-joueur_floki.h
-joueur_ivar.h
-joueur_random.h
-        )
-    
+PLAYERS
 
 add_library(joueurs ${SRCS} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})

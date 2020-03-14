@@ -20,61 +20,13 @@ void Arbitre::initialisation()
   _jeu.reset();
 
   switch ((_numero_partie%2? _player1 : _player2)) {
-      
-        case player::BJORN:
-        _joueur1 = std::make_shared<Bjorn>("Bjorn",true);
-        break;
-    
-
-        case player::BRUTAL_:
-        _joueur1 = std::make_shared<Brutal_>("Brutal_",true);
-        break;
-    
-
-        case player::FLOKI:
-        _joueur1 = std::make_shared<Floki>("Floki",true);
-        break;
-    
-
-        case player::IVAR:
-        _joueur1 = std::make_shared<Ivar>("Ivar",true);
-        break;
-    
-
-        case player::RANDOM:
-        _joueur1 = std::make_shared<Random>("Random",true);
-        break;
-    
+      SWITCH_PLAYERS1
   default:
     break;
   }
 
   switch ((!(_numero_partie%2)? _player1 : _player2)) {
-      
-        case player::BJORN:
-          _joueur2 = std::make_shared<Bjorn> ("Bjorn",false);
-          break;
-    
-
-        case player::BRUTAL_:
-          _joueur2 = std::make_shared<Brutal_> ("Brutal_",false);
-          break;
-    
-
-        case player::FLOKI:
-          _joueur2 = std::make_shared<Floki> ("Floki",false);
-          break;
-    
-
-        case player::IVAR:
-          _joueur2 = std::make_shared<Ivar> ("Ivar",false);
-          break;
-    
-
-        case player::RANDOM:
-          _joueur2 = std::make_shared<Random> ("Random",false);
-          break;
-    
+      SWITCH_PLAYERS2
   default:
     break;
   }

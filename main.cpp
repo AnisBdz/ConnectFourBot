@@ -17,7 +17,7 @@ int main()
     // a.challenge();
 
     // Variation::activated = true;
-    Arbitre b (9999, player::FLOKI, player::IVAR, 100);
+    Arbitre b (9999, player::RANDOM, player::BRUTAL_, 100);
     b.challenge();
     return 0;
 }

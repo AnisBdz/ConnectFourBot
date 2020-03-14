@@ -9,14 +9,13 @@
 #include "joueur.h"
 
 
-class Joueur_Random : public Joueur
+class Random : public Joueur
 {
 
 public:
-    Joueur_Random(std::string nom,bool joueur);
+    Random(std::string nom,bool joueur);
     char nom_abbrege() const override;
 
 
     void recherche_coup(Jeu jeu, int & coup) override;
 };
-

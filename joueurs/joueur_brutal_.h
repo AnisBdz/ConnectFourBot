@@ -6,15 +6,15 @@
 #include "joueur.h"
 
 
-class Joueur_Brutal_ : public Joueur
+class Brutal_ : public Joueur
 {
 private:
 
 public:
-  Joueur_Brutal_(std::string nom, bool joueur);
+  Brutal_(std::string nom, bool joueur);
 
   char nom_abbrege() const override;
-  
+
   void recherche_coup(Jeu, int & coup) override;
 
 };
